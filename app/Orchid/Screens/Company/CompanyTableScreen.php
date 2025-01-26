@@ -61,7 +61,7 @@ class CompanyTableScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Menu::make('Add New Company')
+            Link::make('Add New Company')
                 // ->method('showToast')
                 ->novalidate()
                 ->icon('bs.plus')
