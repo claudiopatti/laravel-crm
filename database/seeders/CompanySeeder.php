@@ -28,7 +28,7 @@ class CompanySeeder extends Seeder
             Company::create([
                 'name' => fake()->company(),
                 'vat_number' => fake()->vat(),
-                'logo' => fake()->imageUrl(640, 480, 'business', true),
+                'logo' => 'https://pokeflip.com/cdn/shop/articles/The_Phenomenal_Firepower_of_Charizard_-_The_Ultimate_Pokemon.jpg?v=1715069361',
     
             ]);
         }

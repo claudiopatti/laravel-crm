@@ -22,7 +22,7 @@ class EmployeeSeeder extends Seeder
         Employee::truncate();
         Schema::enableForeignKeyConstraints();
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 10; $i++) {
 
             $randomCompany = Company::inRandomOrder()->first();
             $randomCompanyId = $randomCompany->id;
