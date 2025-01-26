@@ -111,6 +111,13 @@ Route::screen('/examples/cards', ExampleCardsScreen::class)->name('platform.exam
 Route::screen('/company', CompanyTableScreen::class)->name('platform.company.table');
 Route::screen('/company/create', CompanyFormScreen::class)->name('platform.company.form');
 
+// Company...
+Route::screen('company', CompanyTableScreen::class)
+    ->name('platform.company.table')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push('Companies List'));
+
 
 
 // Route::screen('idea', Idea::class, 'platform.screens.idea');

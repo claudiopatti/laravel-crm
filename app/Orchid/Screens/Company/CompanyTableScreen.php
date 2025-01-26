@@ -7,10 +7,16 @@ use Orchid\Screen\Layout\Table;
 use Orchid\Screen\Repository;
 use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
+use Orchid\Screen\Components\Cells\DateTimeSplit;
+use Orchid\Screen\Actions\Button;
+use Orchid\Screen\Actions\Menu;
+use Orchid\Screen\Actions\Link;
+
 
 
 // models
 use App\Models\Company;
+use App\Models\Employee;
 
 class CompanyTableScreen extends Screen
 {
@@ -21,8 +27,11 @@ class CompanyTableScreen extends Screen
      */
     public function query(): iterable
     {
+
         return [
-            'companies' => Company::all()
+            'companies' => Company::get(),
+            // 'employee' => Employee::all()
+
         ];
     }
 
@@ -33,7 +42,15 @@ class CompanyTableScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'CompanyTableScreen';
+        return 'Company';
+    }
+
+    /**
+     * Display header description.
+     */
+    public function description(): ?string
+    {
+        return 'Company list';
     }
 
     /**
@@ -43,7 +60,14 @@ class CompanyTableScreen extends Screen
      */
     public function commandBar(): iterable
     {
-        return [];
+        return [
+            Menu::make('Add New Company')
+                // ->method('showToast')
+                ->novalidate()
+                ->icon('bs.plus')
+                ->route('platform.company.form'),
+
+        ];
     }
 
     /**
@@ -80,10 +104,18 @@ class CompanyTableScreen extends Screen
                               class='mw-100 d-block img-fluid rounded-1 w-100'>"),
                             // <span class='small text-muted mt-1 mb-0'># {$model->get('id')}</span>")
 
-                TD::make('created_at', 'Created'),
-                    // ->width('100')
-                    // ->usingComponent(DateTimeSplit::class)
-                    // ->align(TD::ALIGN_RIGHT),
+                TD::make('employees', 'Employees')
+                    ->render(function (Company $model) {
+                        // Recupera e concatena i nomi degli impiegati
+                        return $model->employees->map(function ($employee) {
+                            return $employee->name . ' ' . $employee->surname; // Concatenate name and surname
+                        })->implode(', ');
+                    }),
+
+                TD::make('created_at', 'Created')
+                    ->width('100')
+                    ->usingComponent(DateTimeSplit::class)
+                    ->align(TD::ALIGN_RIGHT),
             ]),
         ];
     }
