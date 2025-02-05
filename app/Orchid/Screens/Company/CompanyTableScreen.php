@@ -11,7 +11,8 @@ use Orchid\Screen\Components\Cells\DateTimeSplit;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Menu;
 use Orchid\Screen\Actions\Link;
-
+use Orchid\Support\Color;
+use Orchid\Screen\Fields\Picture;
 
 
 // models
@@ -65,6 +66,7 @@ class CompanyTableScreen extends Screen
                 // ->method('showToast')
                 ->novalidate()
                 ->icon('bs.plus')
+                ->type(Color::SUCCESS)
                 ->route('platform.company.form'),
 
         ];
@@ -96,10 +98,16 @@ class CompanyTableScreen extends Screen
                     // ->usingComponent(Currency::class, before: '$')
                     // ->align(TD::ALIGN_RIGHT),
 
+                    // TD::make('logo', 'Logo')
+                    // ->render(fn (Company $company) => 
+                    //     "<img src='" . asset($company->logo) . "'
+                    //           alt='Company Logo'
+                    //           class='mw-100 d-block img-fluid rounded-1 w-100' style='max-width: 100px;'>"),
+                
                 TD::make('logo', 'Logo')
                     ->width('250')
                     ->render(fn (Company $model) => // Please use view('path')
-                    "<img src='{$model->logo}'
+                    "<img src='" . asset($model->logo) . "'
                               alt='sample'
                               class='mw-100 d-block img-fluid rounded-1 w-100'>"),
                             // <span class='small text-muted mt-1 mb-0'># {$model->get('id')}</span>")

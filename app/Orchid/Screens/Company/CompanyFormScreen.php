@@ -20,8 +20,11 @@ use Orchid\Support\Facades\Layout;
 use Orchid\Support\Facades\Toast;
 use Illuminate\Http\Request;
 
+use Orchid\Attachment\Models\Attachment;
+
 // model
 use App\Models\Company;
+use Orchid\Screen\Fields\Upload;
 
 class CompanyFormScreen extends Screen
 {
@@ -77,11 +80,21 @@ class CompanyFormScreen extends Screen
                     ->value('')
                     ->placeholder('Insert vat number'),
 
-                Input::make('logo')
-                ->type('file')
-                ->title('Logo')
-                ->value('')
-                ->placeholder('Insert logo'),
+                // Input::make('logo')
+                //     ->type('file')
+                //     ->title('Upload logo')
+                //     ->acceptedFiles('.pdf,.jpg,.png') // Specifica i tipi di file consentiti
+                //     ->maxFiles(1), // Numero massimo di file
+                    // ->title('Logo')
+                    // ->value('')
+                    // ->placeholder('Insert logo'),
+
+                    Upload::make('logo')
+                        ->title('Upload logo')
+                        ->acceptedFiles('.jpg,.png') // Accetta solo immagini
+                        ->maxFiles(1)
+                        ->storage('public') // Salva nello storage pubblico
+                        ->targetId(), // Necessario per gestire gli allegati di Orchid
 
                 // Group::make([
                 //     Input::make('email')
@@ -206,15 +219,29 @@ class CompanyFormScreen extends Screen
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'vat_number' => 'required|string|max:11',
-            'logo' => 'nullable',
+            'logo' => 'required|array',
             // 'company.logo' => 'nullable|url',
         ]);
+
+        // Recupera l'ID del file caricato
+        $logoId = $validated['logo'][0] ?? null;
+
+        // Trova il file nel database usando Orchid Attachment
+        $logoPath = null;
+        if ($logoId) {
+            $attachment = Attachment::find($logoId);
+            if ($attachment) {
+                $logoPath = $attachment->url(); // Ottieni il link al file
+            }
+        }
+
+        // $logoRelativePath = str_replace(asset('storage') . '/', '', $logoPath);
 
         // Salva i dati nel database
         Company::create([
             'name' => $validated['name'],
             'vat_number' => $validated['vat_number'],
-            'logo' => $validated['logo'],
+            'logo' => $logoPath,
         ]);
 
         // Mostra un messaggio di successo
