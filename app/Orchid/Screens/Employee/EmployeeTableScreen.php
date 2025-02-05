@@ -2,7 +2,11 @@
 
 namespace App\Orchid\Screens\Employee;
 
+use App\Models\Employee;
+use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
+use Orchid\Screen\TD;
+use Orchid\Support\Facades\Layout;
 
 class EmployeeTableScreen extends Screen
 {
@@ -13,7 +17,9 @@ class EmployeeTableScreen extends Screen
      */
     public function query(): iterable
     {
-        return [];
+        return [
+            'employees' => Employee::all()
+        ];
     }
 
     /**
@@ -33,7 +39,13 @@ class EmployeeTableScreen extends Screen
      */
     public function commandBar(): iterable
     {
-        return [];
+        return [
+            Link::make('Add an Employee')
+            ->class('btn btn-primary')
+            ->route('platform.employee.form')
+            ->novalidate()
+            ->icon('bs.plus'),
+        ];
     }
 
     /**
@@ -43,6 +55,23 @@ class EmployeeTableScreen extends Screen
      */
     public function layout(): iterable
     {
-        return [];
+        return [
+            Layout::table('employees',  [
+                TD::make('id', 'ID'),
+
+                TD::make('name', 'Name'),
+
+                TD::make('surname', 'Surname'),
+
+                TD::make('company_you_belong_to', 'Company'),
+
+                TD::make('phone', 'Phone'),
+
+                TD::make('email', 'Email'),
+
+                // TD::make('created_at', 'Created at'),
+
+            ]),
+        ];
     }
 }
