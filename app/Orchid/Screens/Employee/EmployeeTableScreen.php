@@ -3,10 +3,14 @@
 namespace App\Orchid\Screens\Employee;
 
 use App\Models\Employee;
+use Illuminate\Http\Request;
+use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
+use Orchid\Support\Color;
 use Orchid\Support\Facades\Layout;
+use Orchid\Support\Facades\Toast;
 
 class EmployeeTableScreen extends Screen
 {
@@ -71,7 +75,39 @@ class EmployeeTableScreen extends Screen
 
                 // TD::make('created_at', 'Created at'),
 
+                TD::make('actions', 'Actions')
+                ->render(function (Employee $employee) {
+                    return Button::make('Delete')
+                        ->type(Color::DANGER)
+                        ->icon('bs.trash')
+                        ->method('deleteEmployee')
+                        ->parameters(['id' => $employee->id]);
+                }),
+
+
             ]),
         ];
+    }
+/**
+     * Salva i dati del form.
+     *
+     * @param Request $request
+     */
+    public function deleteEmployee(Request $request)
+    {
+        // Employee::deleted([]);
+        // Toast::info('Employee deleted successfully!');
+
+        // Recupera l'ID del prodotto
+        $employeeId = $request->input('id');
+
+        // Trova e cancella il prodotto
+        $employee = Employee::find($employeeId);
+        if ($employee) {
+            $employee->delete();
+            Toast::info('Employee deleted successfully!');
+        } else {
+            Toast::error('Employee not found!');
+        }
     }
 }
