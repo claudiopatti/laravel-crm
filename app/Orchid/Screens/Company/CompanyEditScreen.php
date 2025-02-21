@@ -25,10 +25,15 @@ class CompanyEditScreen extends Screen
     {
         $this->company = $company; // definisce la variabile $company
         return [
-            'singleCompany' => $company
+            'singleCompany' => $company,
+            'logo' => $company->logo 
+            ? Attachment::where('path', $company->logo)->first() 
+            : null,
+            // 'logoCompany' => $company->logo,
+            // dd($company->logo)
         ];
     }
-
+    
     /**
      * The name of the screen displayed in the header.
      *
@@ -38,7 +43,7 @@ class CompanyEditScreen extends Screen
     {
         return 'Edit ' . $this->company->name;
     }
-
+    
     /**
      * The screen's action buttons.
      *
@@ -48,7 +53,7 @@ class CompanyEditScreen extends Screen
     {
         return [];
     }
-
+    
     /**
      * The screen's layout elements.
      *
@@ -60,11 +65,11 @@ class CompanyEditScreen extends Screen
             // ExampleElements::class,
             Layout::rows([
                 Input::make('singleCompany.name')
-                    ->title('Name')
-                    ->value('')
-                    ->placeholder('Enter your name')
-                    ->help('Enter your full name.'),
-
+                ->title('Name')
+                ->value('')
+                ->placeholder('Enter your name')
+                ->help('Enter your full name.'),
+                
                 Input::make('singleCompany.vat_number')
                     // ->type('number')
                     ->title('Vat number')
@@ -76,21 +81,22 @@ class CompanyEditScreen extends Screen
                         ->acceptedFiles('.jpg,.png') // Accetta solo immagini
                         ->maxFiles(1)
                         ->storage('public') // Salva nello storage pubblico
+                        ->value($this->company->logo ? [$this->company->logo] : [])
                         ->targetId(), // Necessario per gestire gli allegati di Orchid
-
+                        
                 Button::make('Submit')
                     ->method('saveSingleCompany')
                     ->type(Color::BASIC),
             ]),
         ];
     }
-
+    
      /**
-     * Salva i dati del form.
-     *
-     * @param Request $request
-     */
-
+      * Salva i dati del form.
+      *
+      * @param Request $request
+      */
+      
     public function saveSingleCompany(Request $request, Company $company)
     {
         $validated = $request->validate([
@@ -101,7 +107,7 @@ class CompanyEditScreen extends Screen
         // $validated = $request->all();
         // Salva i dati
         $logoIdEdit = $validated['logo'][0] ?? null;
-
+        
         $logoPathEdit = null;
         if ($logoIdEdit) {
             $company->logo = '';
@@ -120,7 +126,7 @@ class CompanyEditScreen extends Screen
             'vat_number' => $validated['singleCompany']['vat_number'] ?? $company->vat_number,
             'logo' => $logoPathEdit ?? $company->logo,
         ]);
-
+        
         $company->save();
         // Redirect
         Toast::info('Company saved successfully!');
