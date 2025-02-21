@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Orchid\Attachment\Models\Attachment;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\Label;
+use Orchid\Screen\Fields\Picture;
 use Orchid\Screen\Fields\Upload;
 use Orchid\Screen\Screen;
 use Orchid\Support\Color;
@@ -26,9 +28,10 @@ class CompanyEditScreen extends Screen
         $this->company = $company; // definisce la variabile $company
         return [
             'singleCompany' => $company,
-            'logo' => $company->logo 
-            ? Attachment::where('path', $company->logo)->first() 
-            : null,
+            'companyLogo' => $company->logo,
+            // 'logo' => $company->logo 
+            // ? Attachment::where('path', $company->logo)->first() 
+            // : null,
             // 'logoCompany' => $company->logo,
             // dd($company->logo)
         ];
@@ -63,31 +66,86 @@ class CompanyEditScreen extends Screen
     {
         return [
             // ExampleElements::class,
+
             Layout::rows([
                 Input::make('singleCompany.name')
-                ->title('Name')
-                ->value('')
-                ->placeholder('Enter your name')
-                ->help('Enter your full name.'),
+                    ->title('Name')
+                    ->value('')
+                    ->placeholder('Enter your name')
+                    ->help('Enter your full name.'),
                 
                 Input::make('singleCompany.vat_number')
-                    // ->type('number')
                     ->title('Vat number')
                     ->value('')
                     ->placeholder('Insert vat number'),
-
-                    Upload::make('logo')
-                        ->title('Uploads logo')
-                        ->acceptedFiles('.jpg,.png') // Accetta solo immagini
-                        ->maxFiles(1)
-                        ->storage('public') // Salva nello storage pubblico
-                        ->value($this->company->logo ? [$this->company->logo] : [])
-                        ->targetId(), // Necessario per gestire gli allegati di Orchid
-                        
+            
+                // Se esiste un logo, mostralo
+                $this->company->logo
+                    ? Picture::make('companyLogo')
+                        ->title('Current Logo')
+                        ->src($this->company->logo)
+                        ->targetId('company-logo-preview')
+                    : null,
+                
+                Upload::make('logo')
+                    ->title('Upload New Logo')
+                    ->acceptedFiles('.jpg,.png')
+                    ->maxFiles(1)
+                    ->storage('public')
+                    ->targetId(),
+            
                 Button::make('Submit')
                     ->method('saveSingleCompany')
                     ->type(Color::BASIC),
             ]),
+            
+            // Layout::rows([
+            //     Input::make('singleCompany.name')
+            //     ->title('Name')
+            //     ->value('')
+            //     ->placeholder('Enter your name')
+            //     ->help('Enter your full name.'),
+                
+            //     Input::make('singleCompany.vat_number')
+            //         // ->type('number')
+            //         ->title('Vat number')
+            //         ->value('')
+            //         ->placeholder('Insert vat number'),
+
+            //     // Layout::columns([
+            //         // Colonna per l'immagine attuale
+            //         Layout::rows([
+            //             $this->company->logo
+            //                 ? \Orchid\Screen\Fields\Picture::make('current_logo')
+            //                     ->title('Current Logo')
+            //                     ->src($this->company->logo)
+            //                     ->targetId('company-logo-preview')
+            //                 : null,
+            //         ]),
+                
+            //         // Colonna per il campo di upload
+            //         Layout::rows([
+            //             Upload::make('logo')
+            //                 ->title('Upload New Logo')
+            //                 ->acceptedFiles('.jpg,.png') // Accetta solo immagini
+            //                 ->maxFiles(1)
+            //                 ->storage('public') // Salva nello storage pubblico
+            //                 ->targetId(), // Necessario per gestire gli allegati di Orchid
+            //         ]),
+            //     // ]),
+
+            //         // Upload::make('logo')
+            //         //     ->title('Uploads logo')
+            //         //     ->acceptedFiles('.jpg,.png') // Accetta solo immagini
+            //         //     ->maxFiles(1)
+            //         //     ->storage('public') // Salva nello storage pubblico
+            //         //     // ->value($this->company->logo ? [$this->company->logo] : [])
+            //         //     ->targetId(), // Necessario per gestire gli allegati di Orchid
+                        
+            //     Button::make('Submit')
+            //         ->method('saveSingleCompany')
+            //         ->type(Color::BASIC),
+            // ]),
         ];
     }
     
