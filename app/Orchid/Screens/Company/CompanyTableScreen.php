@@ -18,6 +18,9 @@ use Orchid\Screen\Fields\Picture;
 // models
 use App\Models\Company;
 use App\Models\Employee;
+use Illuminate\Http\Request;
+use Orchid\Screen\Fields\Group;
+use Orchid\Support\Facades\Toast;
 
 class CompanyTableScreen extends Screen
 {
@@ -106,6 +109,7 @@ class CompanyTableScreen extends Screen
                 
                 TD::make('logo', 'Logo')
                     ->width('250')
+                    // ->height('250')
                     ->render(fn (Company $model) => // Please use view('path')
                     "<img src='" . asset($model->logo) . "'
                               alt='sample'
@@ -124,7 +128,46 @@ class CompanyTableScreen extends Screen
                     ->width('100')
                     ->usingComponent(DateTimeSplit::class)
                     ->align(TD::ALIGN_RIGHT),
+
+                TD::make('', 'Actions')->render(function (Company $company) {
+                    return Group::make([
+                        Button::make('Delete')
+                            ->icon('bs.trash')
+                            ->class('btn btn-danger')
+                            ->parameters(['id' => $company->id])
+                            ->method('deleteCompany'),
+
+                            Link::make('Edit')
+                            ->icon('bs.pencil')
+                            ->class('btn btn-warning')
+                            ->route('platform.company.edit', [$company->id]),
+                    ]);
+                }),
+                    
             ]),
         ];
+    }
+
+        /**
+     * Salva i dati del form.
+     *
+     * @param Request $request
+     */
+    public function deleteCompany(Request $request)
+    {
+        // Employee::deleted([]);
+        // Toast::info('Employee deleted successfully!');
+
+        // Recupera l'ID del prodotto
+        $companyID = $request->input('id');
+
+        // Trova e cancella il prodotto
+        $company = Company::find($companyID);
+        if ($company) {
+            $company->delete();
+            Toast::info('Company deleted successfully!');
+        } else {
+            Toast::error('Company not found!');
+        }
     }
 }

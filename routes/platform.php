@@ -23,8 +23,10 @@ use Tabuna\Breadcrumbs\Trail;
 // test
 use App\Orchid\Screens\Company\CompanyTableScreen;
 use App\Orchid\Screens\Company\CompanyFormScreen;
+use App\Orchid\Screens\Company\CompanyEditScreen;
 use App\Orchid\Screens\Employee\EmployeeTableScreen;
 use App\Orchid\Screens\Employee\EmployeeFormScreen;
+use App\Orchid\Screens\Employee\EmployeeEditScreen;
 
 
 
@@ -112,8 +114,10 @@ Route::screen('profile', UserProfileScreen::class)
 // test
 Route::screen('/company', CompanyTableScreen::class)->name('platform.company.table');
 Route::screen('/company/create', CompanyFormScreen::class)->name('platform.company.form');
+Route::screen('/company/edit/{company?}', CompanyEditScreen::class)->name('platform.company.edit');
 Route::screen('/employee', EmployeeTableScreen::class)->name('platform.employee.table');
 Route::screen('/employee/create', EmployeeFormScreen::class)->name('platform.employee.form');
+Route::screen('/employee/edit/{employee?}', EmployeeEditScreen::class)->name('platform.employee.edit');
 
 // Employee
 Route::screen('employee', EmployeeTableScreen::class)

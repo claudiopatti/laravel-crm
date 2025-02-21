@@ -6,6 +6,7 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Color;
@@ -75,14 +76,29 @@ class EmployeeTableScreen extends Screen
 
                 // TD::make('created_at', 'Created at'),
 
-                TD::make('actions', 'Actions')
-                ->render(function (Employee $employee) {
-                    return Button::make('Delete')
-                        ->type(Color::DANGER)
-                        ->icon('bs.trash')
-                        ->method('deleteEmployee')
-                        ->parameters(['id' => $employee->id]);
+                TD::make('', 'Actions')->render(function (Employee $employee) {
+                    return Group::make([
+                        Button::make('Delete')
+                            ->icon('bs.trash')
+                            ->class('btn btn-danger')
+                            ->parameters(['id' => $employee->id])
+                            ->method('deleteEmployee'),
+
+                            Link::make('Edit')
+                            ->icon('bs.pencil')
+                            ->class('btn btn-warning')
+                            ->route('platform.employee.edit', [$employee->id]),
+                    ]);
                 }),
+
+                // TD::make('actions', 'Actions')
+                // ->render(function (Employee $employee) {
+                //     return Button::make('Delete')
+                //         ->type(Color::DANGER)
+                //         ->icon('bs.trash')
+                //         ->method('deleteEmployee')
+                //         ->parameters(['id' => $employee->id]);
+                // }),
 
 
             ]),
